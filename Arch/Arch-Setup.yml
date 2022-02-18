@@ -4,11 +4,19 @@
     connection: local
     tasks:
 
-    - name: "Updates System":
+    - name: "Updates System"
       community.general.pacman:
         update_cache: yes
         upgrade: yes
-    
+
+    - name: "Adds dylan User to System"
+      ansible.builtin.user:
+        create_home: yes
+        group: dylan
+        groups: wheel
+        name: dylan
+        shell: /bin/zsh
+
     - name: "Installs User Packages"
       community.general.pacman:
         name:
@@ -19,23 +27,86 @@
           - tmux  
         state: present
 
-     - name: "Installs Dev / Util Packages"
+    - name: "Installs Dev / Util Packages"
       community.general.pacman:
         name:
-          - exfatprogs
-          - xorg-xinit
-          - xorg-server
-          - base-devel
-          - libx11
-          - libxft
-          - libinput
-          - 
-          - man-db
-          - man-pages
-          - texinfo
-          - ttf-dejavu
-          - doas
-          - opendoas-sudo 
-          - vim-ansible
-          - openssh
-         state: present 
+           - exfatprogs
+           - xorg-xinit
+           - xorg-server
+             # Base devel replacment
+           - autoconf
+           - automake
+           - binutils
+           - bison
+           - fakeroot
+           - file
+           - findutils
+           - flex
+           - gawk
+           - gcc
+           - gettext
+           - grep
+           - groff
+           - gzip
+           - libtool
+           - m4
+           - make
+           - pacman
+           - patch
+           - pkgconf
+           - sed
+           - which 
+           - libx11
+           - libxft
+           - libinput
+           - man-db
+           - man-pages
+           - texinfo
+           - ttf-dejavu
+           - opendoas
+           - vim-ansible
+           - openssh
+           - git
+        state: present
+
+    - name: "Removes sudo"
+      community.general.pacman:
+        name:
+          - sudo
+        state: absent
+
+    - name: "Copy doas.conf"
+      ansible.builtin.copy:
+        src: ConfigFiles/doas.conf
+        dest: /etc/doas.conf
+        owner: root
+        group: root
+        mode: '0400'
+     
+    - name: "Create sudo symlink for doas"
+      ansible.builtin.file:
+        src: /usr/bin/doas
+        dest: /usr/bin/sudo
+        state: link
+
+    - name: "Copy .tmux.conf"
+      ansible.builtin.copy:
+        src: ConfigFiles/.tmux.conf
+        dest: /home/dylan/.tmux.conf
+        owner: dylan
+        group: dylan
+     
+    - name: "Copy .zshrc"
+      ansible.builtin.copy:
+        src: ConfigFiles/.zshrc
+        dest: /home/dylan/.zshrc
+        owner: dylan
+        group: dylan
+
+    - name: "Copy .xinitrc"
+      ansible.builtin.copy:
+        src: ConfigFiles/.xinitrc
+        dest: /home/dylan/.xinitrc
+        owner: dylan
+        group: dylan
+           
