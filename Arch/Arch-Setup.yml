@@ -1,0 +1,41 @@
+---
+  - name: "Sets up Arch Linux for Dylan"
+    hosts: localhost
+    connection: local
+    tasks:
+
+    - name: "Updates System":
+      community.general.pacman:
+        update_cache: yes
+        upgrade: yes
+    
+    - name: "Installs User Packages"
+      community.general.pacman:
+        name:
+          - zsh
+          - less 
+          - vim
+          - nano 
+          - tmux  
+        state: present
+
+     - name: "Installs Dev / Util Packages"
+      community.general.pacman:
+        name:
+          - exfatprogs
+          - xorg-xinit
+          - xorg-server
+          - base-devel
+          - libx11
+          - libxft
+          - libinput
+          - 
+          - man-db
+          - man-pages
+          - texinfo
+          - ttf-dejavu
+          - doas
+          - opendoas-sudo 
+          - vim-ansible
+          - openssh
+         state: present 
